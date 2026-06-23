@@ -19,6 +19,11 @@ rewriting is needed. Caveat: `workspaceOpen` is an IDE lifecycle hook and does
 
 ## Cursor Cloud specific instructions
 
+- The dev install lives in the venv at `/home/ubuntu/.venvs/skimage-dev`, which is
+  NOT auto-activated in new shells. Activate it (or prepend
+  `/home/ubuntu/.venvs/skimage-dev/bin` to `PATH`) before running `spin`, `pytest`,
+  `pre-commit`, or an editable install. If `meson`/`spin` aren't on `PATH`,
+  `meson-python` fails with `meson executable "meson" not found`.
 - IMPORTANT build gotcha: on the cloud image the default `cc`/`c++` resolve to
   `clang`, and `clang++` fails to link C++ (`/usr/bin/ld: cannot find -lstdc++`).
   Build with the GNU toolchain by prefixing build/install commands with
