@@ -47,6 +47,13 @@ def test_nd_crop():
     np.testing.assert_array_equal(out, data[:, :, :25])
 
 
+def test_scalar_axes():
+    rng = np.random.RandomState(2392534813)
+    data = rng.random((50, 50))
+    out = slice_along_axes(data, [(0, 25)], axes=1)
+    np.testing.assert_array_equal(out, data[:, :25])
+
+
 def test_axes_invalid():
     data = np.empty((2, 3))
     with pytest.raises(ValueError):
