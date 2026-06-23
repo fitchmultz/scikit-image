@@ -36,6 +36,12 @@ rewriting is needed. Caveat: `workspaceOpen` is an IDE lifecycle hook and does
   `requirements/optional.txt` for that coverage.
 - Lint/format runs through pre-commit: `pre-commit run ruff --all-files` and
  `pre-commit run ruff-format --all-files` (ruff is not installed standalone).
+- Build gotcha (clock skew): if `spin install`/import-time rebuild fails with
+ `ERROR: Clock skew detected. File ... has a time stamp N s in the future`, the
+ checkout stamped source files ahead of the (NTP-corrected) system clock. Reset
+ mtimes with `find . -path ./.git -prune -o -print -exec touch {} +` from the
+ repo root, then rebuild. This is environmental and usually one-off, not a code
+ issue.
  Note: `ruff-format` will reformat two pre-existing files under
  `.cursor/plugins/acme-sdk-accelerator/` — that is unrelated repo state, not a
  regression; leave those alone (revert if accidentally reformatted).
