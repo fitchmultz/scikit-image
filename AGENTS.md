@@ -19,12 +19,22 @@ rewriting is needed. Caveat: `workspaceOpen` is an IDE lifecycle hook and does
 
 ## Cursor Cloud specific instructions
 
+- Cloud agents use `.cursor/environment.json`, which runs
+  `.cursor/scripts/setup-cloud-env.sh` on startup. That script creates
+  `~/.venvs/skimage-dev`, installs `requirements.txt`, and runs
+  `CC=gcc CXX=g++ spin install`. Re-run it manually after dependency changes:
+  `bash .cursor/scripts/setup-cloud-env.sh`.
 - IMPORTANT build gotcha: on the cloud image the default `cc`/`c++` resolve to
   `clang`, and `clang++` fails to link C++ (`/usr/bin/ld: cannot find -lstdc++`).
   Build with the GNU toolchain by prefixing build/install commands with
   `CC=gcc CXX=g++` (e.g. `CC=gcc CXX=g++ spin install`). Meson caches the
   compiler in the build dir, so once configured with gcc/g++, `spin test` and
   import-time rebuilds reuse it without the prefix.
+- IMPORTANT PATH gotcha: `spin install` invokes meson-python, which must find the
+  `meson` executable on `PATH`. Activate the venv (or put its `bin` directory on
+  `PATH`) before running `spin install`; calling `~/.venvs/skimage-dev/bin/spin`
+  directly without activation can fail with `meson executable "meson" not found`
+  even when meson is installed in the venv.
 - The package is installed editable via meson-python, so `spin install` rebuilds
   changed extensions automatically on the next `import skimage`. A full
   `spin build --clean` is only needed if incremental builds misbehave.
