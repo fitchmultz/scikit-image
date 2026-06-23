@@ -49,8 +49,11 @@ def slice_along_axes(image, slices, axes=None, copy=False):
         if len(axes) < len(slices):
             raise ValueError("More `slices` than available axes")
 
-    elif len(axes) != len(slices):
-        raise ValueError("`axes` and `slices` must have equal length")
+    else:
+        if isinstance(axes, int):
+            axes = [axes]
+        if len(axes) != len(slices):
+            raise ValueError("`axes` and `slices` must have equal length")
 
     if len(axes) != len(set(axes)):
         raise ValueError("`axes` must be unique")
