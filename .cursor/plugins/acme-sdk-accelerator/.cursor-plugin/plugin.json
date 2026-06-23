@@ -1,0 +1,13 @@
+{
+  "name": "acme-sdk-accelerator",
+  "description": "Cursor workflow for safe, scoped changes to a convention-heavy SDK. Uses scikit-image as the Acme internal-library stand-in.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Mitch Fultz"
+  },
+  "keywords": ["scikit-image", "sdk", "onboarding", "qa", "ci", "enterprise"],
+  "rules": "rules",
+  "skills": "skills",
+  "agents": "agents",
+  "hooks": "hooks/hooks.json"
+}
