@@ -72,8 +72,14 @@ read. For any code/test/docs/PR-ready change in this repo, follow that rule.
 Key points for cloud agents and Automations:
 
 - Run the full governed path first: read `CONTRIBUTING.rst`, plan, build, strict
-  review, focused `spin test`, `pre-commit`, and the verifier's checks inline
-  (the `scikit-image-verifier` Agent is not loaded in cloud).
+  review, focused `spin test`, and `pre-commit`.
+- **Verify with a real second pass.** The custom `scikit-image-verifier` Agent is
+  not auto-loaded in cloud, but its checklist file is committed at
+  `.cursor/plugins/acme-sdk-accelerator/agents/scikit-image-verifier.md`. Dispatch
+  a review subagent (any subagent your runtime supports) and direct it to apply
+  that checklist verbatim, returning the same `PASS`/`FAIL`/`BLOCKED` verdict and
+  return format. If you cannot dispatch a subagent, apply the checklist inline as
+  an explicit self-review. Require `PASS` before any commit or PR.
 - **The PR review is the human checkpoint.** After readiness + verification PASS,
   commit on a `cursor/<short-change-name>` branch (disclosing AI assistance), push
   to `origin`, and open a **draft** PR whose body includes the change-brief
