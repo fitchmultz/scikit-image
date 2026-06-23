@@ -25,7 +25,7 @@ Use direct imports, ad hoc pytest runs, or smoke scripts as diagnostics, then re
 
 Verify:
 
-1. `CONTRIBUTING.rst` and `pyproject.toml` were treated as the source of truth for the touched area and environment/test setup through the sibling demo environment `../.venv-skimage`, using Python 3.13 for this checkout.
+1. `CONTRIBUTING.rst` and `pyproject.toml` were treated as the source of truth for the touched area and environment/test setup. Locally, a dev environment outside the repo (`~/envs/skimage-dev`, per `CONTRIBUTING.rst`) is used; in cloud, the pre-provisioned snapshot environment is used.
 2. The change matches the user's plain-English request.
 3. A change plan (target files, tests, acceptance criteria) was written before editing.
 4. Changed source has matching tests or a clear reason tests belong in a separate change.
@@ -33,9 +33,9 @@ Verify:
 6. The diff was checked for deprecated APIs, scikit-image anti-patterns, docstring drift, unclear user-facing behavior, and residual risks.
 7. Tests use scikit-image conventions from `CONTRIBUTING.rst`.
 8. The focused `spin test` command for touched behavior ran and passed. When it remains unavailable after repo-guided setup, return `BLOCKED`; when code or tests cause the failure, return `FAIL`.
-9. `pre-commit run --files <changed files>` ran and passed for suitable changed files from `../.venv-skimage`. When setup is still pending, require the pyproject-driven uv path before returning `PASS`.
+9. `pre-commit run --files <changed files>` ran and passed for suitable changed files from `~/envs/skimage-dev`. When setup is still pending, require the pyproject-driven uv path before returning `PASS`.
 10. `spin test --test-modified --base-ref upstream/main` ran when practical after the focused gate passed; otherwise the deferral is specific and credible.
-11. Generated setup artifacts beyond the intended repo changes are gone, including new `uv.lock`, build/cache output, and ad hoc logs. The configured sibling environment `../.venv-skimage` remains available as the local development environment.
+11. Generated setup artifacts beyond the intended repo changes are gone, including new `uv.lock`, build/cache output, and ad hoc logs. The configured environment `~/envs/skimage-dev` remains available as the local development environment.
 12. Residual risks that fit the original request scope are fixed and re-verified. Residual risks in the report are limited to user/product choices or separate changes.
 13. The local branch and proposed commit plan are sensible.
 14. The final response is ready to ask whether anything else should be included and whether the user wants leave uncommitted, local commit, or local commit plus PR.

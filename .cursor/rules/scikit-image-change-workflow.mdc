@@ -29,18 +29,23 @@ When the workspace is `scikit-image` and the user asks for a code, test, docs, Q
    - never merge automatically; push and open PRs only through the environment-aware checkpoint below (explicit user approval in the IDE; a draft PR in unattended cloud runs).
 7. Leave the user's Cursor approval and auto-run settings authoritative.
 8. **Review:** Before local commit, run the strict code-quality gate: inspect the diff for deprecated APIs, scikit-image anti-patterns, missing/weak tests, docstring drift, unclear user-facing behavior, and unresolved risks.
-9. **Test:** Before local commit, run the narrowest meaningful `spin test` command first. Configure the project development environment when needed and keep it for later Cursor runs. Use the sibling demo environment at `../.venv-skimage` so Meson does not treat dependency headers as source-tree paths. Activate an existing `../.venv-skimage`; create one with Python 3.13 via uv when setup is needed; read `pyproject.toml` and `CONTRIBUTING.rst`; install the needed pyproject extras with uv; then prepare the build/test setup. For this checkout, the expected setup path is:
-   ```bash
-   uv venv --python 3.13 ../.venv-skimage
-   source ../.venv-skimage/bin/activate
-   python --version
-   uv pip install -e '.[build,test,developer,data]'
-   spin install -v
-   ```
+9. **Test:** Run the focused `spin test` for the touched behavior as the acceptance gate. Set up the environment for where you are running -- do not assume the other environment's setup:
+   - **Local / IDE.** Use a dev environment outside the repository -- scikit-image's `CONTRIBUTING.rst` recommends `~/envs/skimage-dev`. Activate an existing `~/envs/skimage-dev`, or create one with Python 3.13 via uv when setup is needed, then install the pyproject extras and build:
+     ```bash
+     uv venv --python 3.13 ~/envs/skimage-dev
+     source ~/envs/skimage-dev/bin/activate
+     uv pip install -e '.[build,test,developer,data]'
+     spin install -v
+     ```
+   - **Cloud agent / Automation.** Do NOT create a venv and do NOT install uv or another Python. The VM snapshot already ships a complete dev environment (pip user-install: the snapshot's Python, all deps, `skimage` built editable, and `spin`/`pytest`/`pre-commit` on `PATH`). Just rebuild incrementally and test, following the build gotchas in `AGENTS.md` (for example `CC=gcc CXX=g++`, `Cython<3.2`, and the `python`->`python3` shim):
+     ```bash
+     spin install        # incremental rebuild of changed extensions
+     spin test -- <touched tests>
+     ```
    Use direct imports or ad hoc pytest runs as diagnostics, then run focused `spin test` as the acceptance gate.
-10. Before local commit, run `pre-commit run --files <changed files>` for suitable changed files from `../.venv-skimage`. When `pre-commit` needs setup, prepare it using the repo guidance.
+10. Before local commit, run `pre-commit run --files <changed files>` for suitable changed files (from `~/envs/skimage-dev` locally; using the snapshot's `pre-commit` in cloud). When `pre-commit` needs setup, prepare it using the repo guidance -- but in cloud assume it is already installed.
 11. Before local commit, run `spin test --test-modified --base-ref upstream/main` when practical after the focused gate passes; otherwise record why focused `spin test` is the local gate and full modified-test coverage remains the CI gate.
-12. Keep the configured `../.venv-skimage` and clean generated setup artifacts beyond the intended repo changes, such as a new `uv.lock`, build/cache output, and ad hoc logs.
+12. Locally, keep the configured `~/envs/skimage-dev`. In every environment, clean generated setup artifacts beyond the intended repo changes (a new `uv.lock`, build/cache output, ad hoc logs) and never commit a venv, lockfile, or build output to the repo.
 13. When focused `spin test` or suitable `pre-commit` remains unavailable after following `CONTRIBUTING.rst`, stop as `BLOCKED`: report the exact setup blocker and next fix step before any commit/PR choice.
 14. Before asking about commit or PR creation, run the verifier Agent when available and read its verdict.
 15. Treat verifier `PASS` as the prerequisite for final readiness and the commit/PR choice. Treat verifier `FAIL` or `BLOCKED` as the final status for the turn: report the verdict, blocker, and next fix/setup step.

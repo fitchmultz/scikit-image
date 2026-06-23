@@ -19,18 +19,18 @@ Make it easy, fast, and safe for a new engineer or adjacent partner to get a rea
 6. Create or reuse a local branch named like `cursor/<short-change-name>`.
 7. **Build:** Edit code and tests end-to-end. Use gates, tests, verifier output, and handoff evidence as the safety mechanism.
 8. **Review:** Before local commit, run the strict code-quality gate: inspect the diff for deprecated APIs, scikit-image anti-patterns, missing/weak tests, docstring drift, unclear user-facing behavior, and unresolved risks.
-9. **Test:** Before local commit, run the focused `spin test` command for touched behavior first. Configure the project development environment when needed and keep it for later Cursor runs. Use the sibling demo environment at `../.venv-skimage` so Meson does not treat dependency headers as source-tree paths. Activate an existing `../.venv-skimage`; create one with Python 3.13 via uv when setup is needed; read `pyproject.toml` and `CONTRIBUTING.rst`; install the needed pyproject extras with uv; then prepare the build/test setup. For this checkout, the expected setup path is:
+9. **Test:** Before local commit, run the focused `spin test` command for touched behavior first. Configure the project development environment when needed and keep it for later Cursor runs. Use a dev environment outside the repository -- scikit-image's `CONTRIBUTING.rst` recommends `~/envs/skimage-dev`. Activate an existing `~/envs/skimage-dev`; create one with Python 3.13 via uv when setup is needed; read `pyproject.toml` and `CONTRIBUTING.rst`; install the needed pyproject extras with uv; then prepare the build/test setup. For this checkout, the expected setup path is:
    ```bash
-   uv venv --python 3.13 ../.venv-skimage
-   source ../.venv-skimage/bin/activate
+   uv venv --python 3.13 ~/envs/skimage-dev
+   source ~/envs/skimage-dev/bin/activate
    python --version
    uv pip install -e '.[build,test,developer,data]'
    spin install -v
    ```
    Use direct imports or ad hoc pytest runs as diagnostics, then run focused `spin test` as the acceptance gate.
-10. Before local commit, run `pre-commit run --files <changed files>` for suitable changed files from `../.venv-skimage`. When `pre-commit` needs setup, prepare it using the repo guidance.
+10. Before local commit, run `pre-commit run --files <changed files>` for suitable changed files from `~/envs/skimage-dev`. When `pre-commit` needs setup, prepare it using the repo guidance.
 11. Before local commit, run `spin test --test-modified --base-ref upstream/main` when practical after the focused gate passes; otherwise record why focused `spin test` is the live local gate and full modified-test coverage remains the CI gate.
-12. Keep the configured `../.venv-skimage` and clean generated setup artifacts beyond the intended repo changes, such as a new `uv.lock`, build/cache output, and ad hoc logs.
+12. Keep the configured `~/envs/skimage-dev` and clean generated setup artifacts beyond the intended repo changes, such as a new `uv.lock`, build/cache output, and ad hoc logs.
 13. When focused `spin test` or suitable `pre-commit` remains unavailable after following `CONTRIBUTING.rst`, stop as `BLOCKED`: report the exact setup blocker and next fix step before any commit/PR choice.
 14. Before asking about commit or PR creation, run the verifier Agent (`scikit-image-verifier`) when available and read its verdict.
 15. Treat verifier `PASS` as the prerequisite for final readiness and the commit/PR choice. Treat verifier `FAIL` or `BLOCKED` as the final status for the turn: report the verdict, blocker, and next fix/setup step.
@@ -47,7 +47,7 @@ Make it easy, fast, and safe for a new engineer or adjacent partner to get a rea
 Use the bundled renderer when useful:
 
 ```bash
-python .cursor/plugins/acme-sdk-accelerator/skills/scikit-image-change-workflow/scripts/render_change_brief.py \
+python __ACME_PLUGIN_ROOT__/skills/scikit-image-change-workflow/scripts/render_change_brief.py \
   --request "<user request>" \
   --plan "<change plan: files, tests, acceptance criteria>" \
   --summary "<what changed>" \
@@ -89,5 +89,5 @@ The final response should give the user only:
 - Cursor settings own approvals and auto-run. Leave them unchanged.
 - Keep context inside approved workspace roots.
 - Commit, push, publish, or open a PR only after a completed final readiness check and explicit user approval.
-- Environment setup configures and preserves the sibling demo environment `../.venv-skimage` using `pyproject.toml` and `CONTRIBUTING.rst` before marking the change ready.
+- Local environment setup configures and preserves a dev environment outside the repo (`~/envs/skimage-dev`, per `CONTRIBUTING.rst`) before marking the change ready. In cloud, use the pre-provisioned snapshot environment instead.
 - In-scope residual risks are fixed and re-verified before the final handoff.

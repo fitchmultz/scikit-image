@@ -3,28 +3,28 @@
   "hooks": {
     "beforeReadFile": [
       {
-        "command": "python3 $CURSOR_PROJECT_DIR/.cursor/plugins/acme-sdk-accelerator/hooks/approved_roots_guard.py",
+        "command": "python3 __ACME_PLUGIN_ROOT__/hooks/approved_roots_guard.py",
         "timeout": 5,
         "failClosed": false
       }
     ],
     "beforeTabFileRead": [
       {
-        "command": "python3 $CURSOR_PROJECT_DIR/.cursor/plugins/acme-sdk-accelerator/hooks/approved_roots_guard.py",
+        "command": "python3 __ACME_PLUGIN_ROOT__/hooks/approved_roots_guard.py",
         "timeout": 5,
         "failClosed": false
       }
     ],
     "beforeShellExecution": [
       {
-        "command": "python3 $CURSOR_PROJECT_DIR/.cursor/plugins/acme-sdk-accelerator/hooks/approved_roots_guard.py",
+        "command": "python3 __ACME_PLUGIN_ROOT__/hooks/approved_roots_guard.py",
         "timeout": 5,
         "failClosed": false
       }
     ],
     "preToolUse": [
       {
-        "command": "python3 $CURSOR_PROJECT_DIR/.cursor/plugins/acme-sdk-accelerator/hooks/approved_roots_guard.py",
+        "command": "python3 __ACME_PLUGIN_ROOT__/hooks/approved_roots_guard.py",
         "matcher": "Write|Edit|Shell|Read",
         "timeout": 5,
         "failClosed": false
