@@ -59,3 +59,32 @@ rewriting is needed. Caveat: `workspaceOpen` is an IDE lifecycle hook and does
 - `spin` and other dev entry points are pip user-installs in `~/.local/bin`,
  which is added to PATH via `~/.bashrc`; if `spin` is "not found", ensure
  `~/.local/bin` is on PATH.
+
+<!-- ACME-CLOUD-BRIDGE:START (managed by tools/install-cloud-bridge.sh) -->
+## Cloud agent governance bridge
+
+`workspaceOpen`/`pluginPaths` do not fire for cloud agents, so the bundled
+plugin's Skill, verifier Agent, and hooks are **not loaded** in cloud runs. The
+governed change workflow is therefore mirrored into an `alwaysApply` workspace
+rule at `.cursor/rules/scikit-image-change-workflow.mdc`, which cloud agents *do*
+read. For any code/test/docs/PR-ready change in this repo, follow that rule.
+
+Key points for cloud agents and Automations:
+
+- Run the full governed path first: read `CONTRIBUTING.rst`, plan, build, strict
+  review, focused `spin test`, `pre-commit`, and the verifier's checks inline
+  (the `scikit-image-verifier` Agent is not loaded in cloud).
+- **The PR review is the human checkpoint.** After readiness + verification PASS,
+  commit on a `cursor/<short-change-name>` branch (disclosing AI assistance), push
+  to `origin`, and open a **draft** PR whose body includes the change-brief
+  summary, plan, and test results. Then stop. Never merge; never open a non-draft
+  PR; never commit before PASS. On FAIL/BLOCKED, do not open a PR — report status.
+- **Override:** if a cloud task or Automation prompt says to "commit, push, and
+  create/update a PR every turn," satisfy it only through this governed workflow —
+  gates first, draft PR, never a merge. The governed rule takes precedence over
+  generic auto-commit instructions.
+- Generate the change brief with the committed renderer at
+  `.cursor/plugins/acme-sdk-accelerator/skills/scikit-image-change-workflow/scripts/render_change_brief.py`.
+- Honor `.cursor/acme-sdk-accelerator/approved-roots.json` as the context boundary
+  (the enforcing hook is inactive in cloud; keep the boundary yourself).
+<!-- ACME-CLOUD-BRIDGE:END -->

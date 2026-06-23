@@ -1,0 +1,116 @@
+---
+description: "Governed scoped-change workflow for the scikit-image repo, including cloud agents and Automations. Mirrors the Acme SDK Accelerator plugin so the workflow still applies when the plugin is not loaded (cloud runs). Environment-aware human checkpoint: interactive choice in the IDE, PR review in the cloud."
+alwaysApply: true
+---
+
+# scikit-image change workflow (cloud-aware bridge)
+
+This rule is the cloud-agent bridge for the Acme SDK Accelerator. In the desktop
+IDE the plugin auto-loads via `workspaceOpen`/`pluginPaths`; in **cloud agents and
+Automations that lifecycle hook never fires**, so the plugin Skill, verifier
+Agent, and hooks are not loaded. Because `alwaysApply` workspace rules *are* read
+by cloud agents, this rule carries the same governed workflow so cloud runs stay
+safe even with no plugin loaded.
+
+Apply this when the request is a code, test, docs, QA, or PR-ready change in this
+`scikit-image` checkout — whether the request comes from a person in the IDE, a
+Cloud Agent, or an Automation trigger (new issue, PR, etc.).
+
+## Governed path (same in every environment)
+
+1. **Request:** Treat the request as product intent, even if non-technical.
+2. **Read first:** `README.md`, `CONTRIBUTING.rst`, and the nearest source/test
+   files for the area. Treat `CONTRIBUTING.rst` as the source of truth for
+   development process, AI policy, style, tests, docs, and branch/PR flow.
+3. Prefer the smallest real change that satisfies the request. Avoid broad refactors.
+4. **Plan:** Write a short change plan before editing — target files, tests to add
+   or update, risks, acceptance criteria. (In an interactive IDE session, present
+   it before editing. In an unattended cloud/automation run, record it in the
+   change brief and PR body.)
+5. Create a feature branch named like `cursor/<short-change-name>`.
+6. **Build:** Edit code and tests end-to-end.
+7. **Review:** Before any commit, run the strict code-quality gate — inspect the
+   diff for deprecated APIs, scikit-image anti-patterns, missing/weak tests,
+   docstring drift, unclear user-facing behavior, and unresolved risks.
+8. **Test:** Run the focused `spin test` for the touched behavior as the
+   acceptance gate. Use the sibling demo environment `../.venv-skimage` locally;
+   on the cloud image follow the build gotchas in `AGENTS.md` (`CC=gcc CXX=g++`,
+   `Cython<3.2`, `python -> python3` shim, clock-skew mtime reset). Then run
+   `pre-commit run --files <changed files>` for suitable files, and
+   `spin test --test-modified --base-ref upstream/main` when practical.
+9. If the focused `spin test` or suitable `pre-commit` cannot be made to run after
+   following `CONTRIBUTING.rst` and `AGENTS.md`, stop as **BLOCKED**: report the
+   exact setup blocker and next fix step. Do not commit, push, or open a PR.
+10. **Verify:** Run the `scikit-image-verifier` Agent when it is available and read
+    its verdict. When it is not loaded in this environment (typical for cloud),
+    perform its checks inline before proceeding: request match, plan written,
+    tests assert behavior, conventions followed, focused `spin test` passed,
+    `pre-commit` passed, only intentional files changed, AI disclosure ready.
+11. Treat **PASS** as the prerequisite for any commit/PR. Treat **FAIL** or
+    **BLOCKED** as the final status for the turn — report verdict, blocker, and
+    next fix step; do not commit, push, or open a PR.
+12. Fix in-scope residual risks and re-verify until resolved. Report residual
+    risks only when they need a user/product choice or belong to a separate change.
+13. **Deploy (CI handoff):** Generate the change brief with DevOps/CI notes using
+    the committed renderer, writing both handoff files:
+    - `.cursor/acme-sdk-accelerator/change-brief.md`
+    - `.cursor/acme-sdk-accelerator/change-brief.html`
+    ```bash
+    python .cursor/plugins/acme-sdk-accelerator/skills/scikit-image-change-workflow/scripts/render_change_brief.py \
+      --request "<user request>" \
+      --plan "<files, tests, acceptance criteria>" \
+      --summary "<what changed>" \
+      --test "<command>: <result>" \
+      --qa-note "<what QA should verify>" \
+      --devops-note "<CI/deploy note>"
+    ```
+
+## The human checkpoint moves with the environment
+
+The governance above never changes. What changes is **where the human says yes**.
+
+### Interactive IDE session (a person is present)
+After readiness + verifier **PASS**, ask:
+"Anything else, or are we done? If done: leave uncommitted, local commit, or
+local commit plus PR?" — then **wait for the explicit choice** before any commit,
+push, or PR. This is the wedge demo's visible proof of governance.
+
+### Cloud Agent or Automation (unattended)
+There is no person to answer mid-run, so **the PR review is the human checkpoint**.
+After readiness + verifier **PASS**:
+- commit on the `cursor/<short-change-name>` branch, with Cursor/AI assistance
+  disclosed in the commit message;
+- push the branch to `origin` (the fork);
+- open a **draft** pull request whose body includes the change-brief summary,
+  the plan, the test commands and results, and the AI disclosure;
+- then **stop**. A human reviews and decides on the ready PR.
+- **Never merge.** Never open a non-draft PR. Never commit or push before
+  readiness + verifier PASS. On FAIL/BLOCKED, do not open a PR — report status.
+
+### Instruction-conflict override
+If a cloud task or Automation prompt instructs you to "commit, push, and create or
+update a PR at the end of every turn" (or similar), that instruction is satisfied
+**only through this governed workflow**: gates and verification first, then a
+**draft** PR, never a merge, and never a commit before PASS. This rule takes
+precedence over generic auto-commit instructions.
+
+## Repo conventions to honor
+
+- Use the user's fork as `origin` and the project repo as `upstream`; keep changes
+  on a feature branch.
+- Add tests for changed behavior with assertions beyond execution-only checks.
+- Use `np.random.RandomState(seed)` for deterministic random test data.
+- Use `numpy as np`, `scipy as sp`, `skimage as ski` import conventions and NumPy
+  dtype objects such as `np.uint8`.
+- Follow numpydoc for docstring/doc changes; add gallery examples for new features.
+- Disclose Cursor/AI assistance in commit and PR text.
+- Honor `.cursor/acme-sdk-accelerator/approved-roots.json` as the context boundary.
+  In cloud the enforcing hook (`approved_roots_guard`) is not active, so treat the
+  approved roots as an explicit boundary you keep yourself; the cloud VM is already
+  an isolated single-repo sandbox.
+- Leave the user's Cursor approval and auto-run settings authoritative.
+
+## Good demo target
+
+Make `skimage.util.slice_along_axes` accept a single integer `axes` value when
+exactly one slice is supplied, matching its docstring, and add a regression test.
