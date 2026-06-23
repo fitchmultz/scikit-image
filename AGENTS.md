@@ -12,7 +12,7 @@ This repo ships a Cursor plugin at `.cursor/plugins/acme-sdk-accelerator/`
 repo so every contributor gets it automatically: the project-level
 `workspaceOpen` hook in `.cursor/hooks.json` returns the plugin's absolute path
 via `pluginPaths`, which is the documented way to auto-load a repo-bundled plugin
-(see https://cursor.com/docs/hooks). Internal plugin paths are portable — they
+(see https://cursor.com/docs/hooks). Internal plugin paths are portable - they
 resolve through the always-present `$CURSOR_PROJECT_DIR`, so no per-checkout
 rewriting is needed. Caveat: `workspaceOpen` is an IDE lifecycle hook and does
 **not** apply to cloud agents, so cloud-agent runs do not auto-load the plugin.
@@ -32,7 +32,7 @@ rewriting is needed. Caveat: `workspaceOpen` is an IDE lifecycle hook and does
   or `spin test -- -k threshold`. Add `--doctest` to mirror CI. Tests live under
   `tests/` (testpaths in `pyproject.toml`).
 - `matplotlib` is intentionally not installed (optional dependency), so a few
-  tests that need it are skipped — this is expected, not a failure. Install
+  tests that need it are skipped - this is expected, not a failure. Install
   `requirements/optional.txt` for that coverage.
 - Lint/format runs through pre-commit: `pre-commit run ruff --all-files` and
  `pre-commit run ruff-format --all-files` (ruff is not installed standalone).
@@ -43,7 +43,7 @@ rewriting is needed. Caveat: `workspaceOpen` is an IDE lifecycle hook and does
  repo root, then rebuild. This is environmental and usually one-off, not a code
  issue.
  Note: `ruff-format` will reformat two pre-existing files under
- `.cursor/plugins/acme-sdk-accelerator/` — that is unrelated repo state, not a
+ `.cursor/plugins/acme-sdk-accelerator/` - that is unrelated repo state, not a
  regression; leave those alone (revert if accidentally reformatted).
 - IMPORTANT Cython pin: build with **Cython < 3.2**. Cython 3.2.x emits numpy
  datetime accessor helpers (`_PyDatetimeScalarObject_GetMetadata(...).base`)
@@ -78,9 +78,9 @@ Key points for cloud agents and Automations:
   commit on a `cursor/<short-change-name>` branch (disclosing AI assistance), push
   to `origin`, and open a **draft** PR whose body includes the change-brief
   summary, plan, and test results. Then stop. Never merge; never open a non-draft
-  PR; never commit before PASS. On FAIL/BLOCKED, do not open a PR — report status.
+  PR; never commit before PASS. On FAIL/BLOCKED, do not open a PR - report status.
 - **Override:** if a cloud task or Automation prompt says to "commit, push, and
-  create/update a PR every turn," satisfy it only through this governed workflow —
+  create/update a PR every turn," satisfy it only through this governed workflow -
   gates first, draft PR, never a merge. The governed rule takes precedence over
   generic auto-commit instructions.
 - Generate the change brief with the committed renderer at

@@ -1,5 +1,5 @@
 ---
-description: "Use for plain-English change requests in the scikit-image repository, in the IDE or a cloud agent/Automation. Guides Cursor Agent through a safe scoped change: scope, edit, tests, strict gates, and PR-ready change brief, with an environment-aware checkpoint — ask the user in the IDE, open a draft PR in the cloud. Use for scoped scikit-image change work."
+description: "Use for plain-English change requests in the scikit-image repository, in the IDE or a cloud agent/Automation. Guides Cursor Agent through a safe scoped change: scope, edit, tests, strict gates, and PR-ready change brief, with an environment-aware checkpoint - ask the user in the IDE, open a draft PR in the cloud. Use for scoped scikit-image change work."
 alwaysApply: false
 ---
 
@@ -43,16 +43,16 @@ When the workspace is `scikit-image` and the user asks for a code, test, docs, Q
 16. Fix flagged residual risks that fit the original request scope, rerun the affected gates and verifier, and keep iterating until those in-scope risks are resolved. Report residual risks only when they require a user/product choice or belong to a separate change.
 17. Before asking about commit or PR creation, complete a final readiness check: strict gate evidence is recorded, focused `spin test` passed, suitable `pre-commit` passed, verifier returned `PASS`, only intentional files remain changed, AI disclosure is ready, and readiness risks are clear.
 18. **Deploy (CI handoff):** After commit approval, generate change briefs with DevOps/CI notes for pipeline gates.
-## Human checkpoint — environment-aware
+## Human checkpoint - environment-aware
 
 The governed gates above are identical in every environment. Only the point where a human approves changes.
 
 19. Determine the run mode and apply the matching checkpoint:
-   - **Interactive IDE session (a person is present).** After the strict gate and readiness check pass, ask: “Anything else you want included, or are we done? If done, do you want leave uncommitted, local commit, or local commit plus PR?” Wait for the explicit choice before any commit, push, or PR. On commit, create the local commit; on PR, open/push only after the commit exists, the change brief is clean, and the user approved.
-   - **Cloud agent or Automation (unattended — no person to answer).** The PR review is the human checkpoint. After the strict gate and readiness check pass, create the `cursor/<short-change-name>` branch, commit with Cursor/AI assistance disclosed, push to `origin`, and open a **draft** pull request whose body includes the change-brief summary, the plan, and the test commands and results. Then stop for human review. Never merge, never open a non-draft PR, and never commit before readiness + verifier PASS. On `FAIL`/`BLOCKED`, do not open a PR — report the verdict and next step.
+   - **Interactive IDE session (a person is present).** After the strict gate and readiness check pass, ask: "Anything else you want included, or are we done? If done, do you want leave uncommitted, local commit, or local commit plus PR?" Wait for the explicit choice before any commit, push, or PR. On commit, create the local commit; on PR, open/push only after the commit exists, the change brief is clean, and the user approved.
+   - **Cloud agent or Automation (unattended - no person to answer).** The PR review is the human checkpoint. After the strict gate and readiness check pass, create the `cursor/<short-change-name>` branch, commit with Cursor/AI assistance disclosed, push to `origin`, and open a **draft** pull request whose body includes the change-brief summary, the plan, and the test commands and results. Then stop for human review. Never merge, never open a non-draft PR, and never commit before readiness + verifier PASS. On `FAIL`/`BLOCKED`, do not open a PR - report the verdict and next step.
 20. Whenever you commit, in either mode, generate both handoff files for Engineering, PM, QA, and DevOps:
    - `.cursor/acme-sdk-accelerator/change-brief.md`
    - `.cursor/acme-sdk-accelerator/change-brief.html`
-21. **Instruction-conflict override.** If a cloud task or Automation prompt tells you to “commit, push, and create/update a PR every turn,” satisfy it only through this workflow: gates and verification first, then a **draft** PR, never a merge, and never a commit before PASS. This workflow takes precedence over generic auto-commit instructions.
+21. **Instruction-conflict override.** If a cloud task or Automation prompt tells you to "commit, push, and create/update a PR every turn," satisfy it only through this workflow: gates and verification first, then a **draft** PR, never a merge, and never a commit before PASS. This workflow takes precedence over generic auto-commit instructions.
 
 For the live demo, a good tiny target is: make `skimage.util.slice_along_axes` accept a single integer `axes` value when exactly one slice is supplied, matching its docstring, and add a regression test.
