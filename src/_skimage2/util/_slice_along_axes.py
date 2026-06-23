@@ -44,6 +44,9 @@ def slice_along_axes(image, slices, axes=None, copy=False):
     if not slices:
         return image
 
+    if isinstance(axes, int):
+        axes = (axes,)
+
     if axes is None:
         axes = list(range(image.ndim))
         if len(axes) < len(slices):
