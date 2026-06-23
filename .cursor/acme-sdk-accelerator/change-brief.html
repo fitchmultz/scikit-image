@@ -24,41 +24,45 @@ ul { padding-left: 20px; }
 <p class="subtitle">Generated for Engineering, PM, QA, and DevOps from one Cursor Agent run.</p>
 <div class="grid"><section class='card'><h2>Request</h2><p>Fix slice_along_axes to accept integer axes with one slice.</p></section>
 <section class='card'><h2>Plan</h2><p>Normalize scalar integer axes to a one-item list, preserve existing validation, and add mirrored regression tests in skimage/skimage2 suites.</p></section>
-<section class='card'><h2>PM summary</h2><p>slice_along_axes now accepts int-like axes values for single-slice input and has regression coverage in both test modules.</p></section>
+<section class='card'><h2>PM summary</h2><p>slice_along_axes now accepts int-like axes values for single-slice input and has mirrored regression tests in both util test suites.</p></section>
 <section class='card'><h2>Engineering notes</h2><ul>
 <li>Branch: <code>cursor/fix-slice-int-axis-3ea2</code></li>
-<li>Commit: <code>0802e942b</code></li>
+<li>Commit: <code>c641f46e2</code></li>
 <li>AI disclosure: Cursor Agent assisted with this change; author remains responsible for review.</li>
 </ul>
 <h3>Changed files</h3>
 <pre><code>
-src/_skimage2/util/_slice_along_axes.py      | 9 +++++++--
+.cursor/acme-sdk-accelerator/change-brief.html | 66 ++++++++++++++++++++++++++
 
- tests/skimage/util/test_slice_along_axes.py  | 7 +++++++
+ .cursor/acme-sdk-accelerator/change-brief.md   | 52 ++++++++++++++++++++
 
- tests/skimage2/util/test_slice_along_axes.py | 7 +++++++
+ src/_skimage2/util/_slice_along_axes.py        |  9 +++-
 
- 3 files changed, 21 insertions(+), 2 deletions(-)
+ tests/skimage/util/test_slice_along_axes.py    |  7 +++
+
+ tests/skimage2/util/test_slice_along_axes.py   |  7 +++
+
+ 5 files changed, 139 insertions(+), 2 deletions(-)
 
 </code></pre></section>
 <section class='card'><h2>QA notes</h2><ul>
-<li>Verify changed behavior and any edge cases named in the tests.</li>
+<li>Regression covered by direct scalar-axis tests in both mirrored util suites.</li>
+<li>Modified-subpackage test gate passed with expected optional dependency skips.</li>
 </ul></section>
 <section class='card'><h2>DevOps / CI notes</h2><ul>
-<li>Run the normal scikit-image CI gates before merge.</li>
+<li>No workflow or dependency changes; standard CI gates should remain unchanged.</li>
 </ul></section>
 <section class='card'><h2>Validation</h2><ul>
-<li>Pre-test snapshot commit; focused spin test and pre-commit checks run in follow-up commits.</li>
+<li>CC=gcc CXX=g++ spin install (pass)</li>
+<li>spin test -- tests/skimage/util/test_slice_along_axes.py tests/skimage2/util/test_slice_along_axes.py (20 passed)</li>
+<li>pre-commit run --files src/_skimage2/util/_slice_along_axes.py tests/skimage/util/test_slice_along_axes.py tests/skimage2/util/test_slice_along_axes.py .cursor/acme-sdk-accelerator/change-brief.md .cursor/acme-sdk-accelerator/change-brief.html (pass)</li>
+<li>spin test --test-modified --base-ref main (870 passed, 4 skipped optional deps)</li>
 </ul></section>
 <section class='card'><h2>Residual risk</h2><ul>
-<li>Low risk: normalization only touches scalar axes handling and still enforces length/range checks.</li>
+<li>Low residual risk: scalar-axis normalization is localized and keeps existing range/uniqueness checks.</li>
 </ul></section>
 <section class='card'><h2>Local git status</h2><pre><code>
-M src/_skimage2/util/_slice_along_axes.py
-
- M tests/skimage/util/test_slice_along_axes.py
-
- M tests/skimage2/util/test_slice_along_axes.py
+clean
 
 </code></pre></section></div>
 </main>
