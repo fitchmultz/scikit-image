@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PR-ready change brief</title>
+<style>
+:root { color-scheme: light dark; --bg: #f7f7f4; --fg: #171717; --card: #fff; --muted: #5f6368; --accent: #5b6cff; }
+@media (prefers-color-scheme: dark) { :root { --bg: #111; --fg: #eee; --card: #1c1c1c; --muted: #aaa; } }
+body { margin: 0; padding: 32px; background: var(--bg); color: var(--fg); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+main { max-width: 960px; margin: 0 auto; }
+h1 { margin: 0 0 8px; font-size: 34px; }
+.subtitle { color: var(--muted); margin-bottom: 24px; }
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.card { background: var(--card); border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); border-radius: 14px; padding: 18px; box-shadow: 0 1px 6px color-mix(in srgb, #000 10%, transparent); }
+h2 { color: var(--accent); margin-top: 0; font-size: 18px; }
+pre { overflow: auto; padding: 12px; border-radius: 10px; background: color-mix(in srgb, var(--fg) 8%, transparent); }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+ul { padding-left: 20px; }
+</style>
+</head>
+<body>
+<main>
+<h1>PR-ready change brief</h1>
+<p class="subtitle">Generated for Engineering, PM, QA, and DevOps from one Cursor Agent run.</p>
+<div class="grid"><section class='card'><h2>Request</h2><p>Fix slice_along_axes so axes=1 with one slice works (docstring says int is allowed)</p></section>
+<section class='card'><h2>Plan</h2><p>Normalize explicit int axes to a one-element list in src/_skimage2/util/_slice_along_axes.py; add regression tests in skimage and skimage2 test suites.</p></section>
+<section class='card'><h2>PM summary</h2><p>slice_along_axes now accepts a single integer axes value when one slice is supplied, matching the documented API. Previously this raised TypeError: object of type &#x27;int&#x27; has no len().</p></section>
+<section class='card'><h2>Engineering notes</h2><ul>
+<li>Branch: <code>cursor/fix-slice-along-axes-int-5807</code></li>
+<li>Commit: <code>a233c4aae</code></li>
+<li>AI disclosure: Cursor Agent assisted with this change; author remains responsible for review.</li>
+</ul>
+<h3>Changed files</h3>
+<pre><code>
+src/_skimage2/util/_slice_along_axes.py      | 7 +++++--
+
+ tests/skimage/util/test_slice_along_axes.py  | 7 +++++++
+
+ tests/skimage2/util/test_slice_along_axes.py | 7 +++++++
+
+ 3 files changed, 19 insertions(+), 2 deletions(-)
+
+</code></pre></section>
+<section class='card'><h2>QA notes</h2><ul>
+<li>Regression test covers axes=1 with a single 2D slice.</li>
+</ul></section>
+<section class='card'><h2>DevOps / CI notes</h2><ul>
+<li>Run the normal scikit-image CI gates before merge.</li>
+</ul></section>
+<section class='card'><h2>Validation</h2><ul>
+<li>spin test -- tests/skimage/util/test_slice_along_axes.py tests/skimage2/util/test_slice_along_axes.py (20 passed)</li>
+<li>pre-commit run --files &lt;changed files&gt; (passed)</li>
+</ul></section>
+<section class='card'><h2>Residual risk</h2><ul>
+<li>Residual risk: numpy scalar integer types (np.int64) are not normalized; docstring documents Python int only.</li>
+</ul></section>
+<section class='card'><h2>Local git status</h2><pre><code>
+clean
+
+</code></pre></section></div>
+</main>
+</body>
+</html>
