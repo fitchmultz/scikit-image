@@ -35,4 +35,21 @@ rewriting is needed. Caveat: `workspaceOpen` is an IDE lifecycle hook and does
   tests that need it are skipped — this is expected, not a failure. Install
   `requirements/optional.txt` for that coverage.
 - Lint/format runs through pre-commit: `pre-commit run ruff --all-files` and
-  `pre-commit run ruff-format --all-files` (ruff is not installed standalone).
+ `pre-commit run ruff-format --all-files` (ruff is not installed standalone).
+ Note: `ruff-format` will reformat two pre-existing files under
+ `.cursor/plugins/acme-sdk-accelerator/` — that is unrelated repo state, not a
+ regression; leave those alone (revert if accidentally reformatted).
+- IMPORTANT Cython pin: build with **Cython < 3.2**. Cython 3.2.x emits numpy
+ datetime accessor helpers (`_PyDatetimeScalarObject_GetMetadata(...).base`)
+ that are not declared by the installed numpy 2.4.x headers, so the build fails
+ with `request for member 'base' in something not a structure or union`. The
+ update script installs `Cython>=3.0.10,<3.2`; `requirements/build.txt` alone
+ would pull 3.2.x. After changing Cython, `rm -rf build build-install` before
+ rebuilding so stale generated `.c` files are regenerated.
+- Only `python3` exists on the cloud image (no bare `python`). The Meson build
+ invokes `src/_skimage2/_build_utils/cythoner.py` via `#!/usr/bin/env python`,
+ so a `python -> python3` shim must be on PATH (a symlink at
+ `~/.local/bin/python` is created during setup and persists in the snapshot).
+- `spin` and other dev entry points are pip user-installs in `~/.local/bin`,
+ which is added to PATH via `~/.bashrc`; if `spin` is "not found", ensure
+ `~/.local/bin` is on PATH.
